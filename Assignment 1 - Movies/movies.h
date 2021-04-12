@@ -1,10 +1,17 @@
+/* Name : Terence Tang
+*  Course : CS344 - Operating Systems
+*  Date : Apr 12, 2021
+*  Assignment #1: Movies
+*  Description:  Header file for defining the movies library of functions used for this assignment.
+*/
+
 /* struct for movie information */
 struct movie;
 
 /* Parse the current line which is space delimited and create a
 *  movie struct with the data in this line
 */
-struct movie *createMovie(char *currLine, int movieID);
+struct movie *createMovie(char *currLine);
 
 /*
 * Return a linked list of movies by parsing data from
@@ -23,15 +30,18 @@ void printMovie(struct movie* aMovie);
 void printMovieList(struct movie *list);
 
 /*
-* Print the linked list of movie for a given year
+* Print the list of movies for a given year
 */
 void printMovieListByYear(int year, struct movie *list);
 
 /*
-* Print the linked list of movie for a given language
+* Print the list of movies for a given language
 */
 void printMovieListByLanguage(char *language, struct movie *list);
 
+/*
+* Print the highest rating movie for each year
+*/
 void printHighestRatedMovieByYear(struct movie *list);
 
 /*
@@ -39,4 +49,8 @@ void printHighestRatedMovieByYear(struct movie *list);
 */
 void printInstructions();
 
+/*
+* Prompts user for input regarding which search feature they 
+* would like to utilize on the given list of movies
+*/
 int getUserFeatureChoice();

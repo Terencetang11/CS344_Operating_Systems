@@ -1,6 +1,13 @@
-// If you are not compiling with the gcc option --std=gnu99, then
-// uncomment the following line or you might get a compiler warning
-//#define _GNU_SOURCE
+/* Name : Terence Tang
+*  Course : CS344 - Operating Systems
+*  Date : Apr 12, 2021
+*  Assignment #1: Movies
+*  Description:  C Program built to practice using system calls for input, output, and reading / manipulating files.
+*                Main program built to consume a given file of movies, releaes years, languages, ratings and then
+*                allows user to prompt for additional details, e.g. movies released in a specific year, or language.
+*/
+
+// compiled using gcc option --std=c99
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,11 +18,9 @@
 /* struct for movie information */
 struct movie
 {
-    int movieID;
     char *title;
     int year;
-    char *language;
-    char language2[5][21];
+    char language[5][21];   // array set to store up to max 5 language of len 20 chars
     float ratingValue;
     struct movie *next;
 };
@@ -24,10 +29,9 @@ struct movie
 * Parse the current line which is space delimited and create a
 * student struct with the data in this line
 */
-struct movie *createMovie(char *currLine, int movieID)
+struct movie *createMovie(char *currLine)
 {
     struct movie *currMovie = malloc(sizeof(struct movie));
-    currMovie->movieID = movieID;
 
     // For use with strtok_r
     char *saveptr;
@@ -42,10 +46,8 @@ struct movie *createMovie(char *currLine, int movieID)
     token = strtok_r(NULL, ",", &saveptr);
     currMovie->year = atoi(token);
 
-    // The next token is the movie language
+    // The next token is the list of movie languages
     token = strtok_r(NULL, ",", &saveptr);
-    currMovie->language = calloc(strlen(token) + 1, sizeof(char));
-    strcpy(currMovie->language, token);
 
     // remove first and last [] chars from list of languages
     token++;
@@ -54,14 +56,14 @@ struct movie *createMovie(char *currLine, int movieID)
 
     // The first language in the list of languages
     char *tokenLang = strtok_r(token, ";", &saveptrLang);
-    strcpy(currMovie->language2[index] , tokenLang);
+    strcpy(currMovie->language[index] , tokenLang);
     tokenLang = strtok_r(NULL, ";", &saveptrLang);
 
     // Parse through the list of languages and add to language array in movie struct
     while (tokenLang != NULL)
     {
         index++;
-        strcpy(currMovie->language2[index] , tokenLang);
+        strcpy(currMovie->language[index] , tokenLang);
         tokenLang = strtok_r(NULL, ";", &saveptrLang);
     }
 
@@ -88,7 +90,7 @@ struct movie *processFile(char *filePath)
     size_t len = 0;
     ssize_t nread;
     char *token;
-    int movieID = 0;
+    int movieID = 0;    // movieID used to track # of movies parsed
 
     // The head of the linked list
     struct movie *head = NULL;
@@ -104,9 +106,9 @@ struct movie *processFile(char *filePath)
         movieID++;
 
         // Get a new movie node corresponding to the current line
-        struct movie *newNode = createMovie(currLine, movieID);
+        struct movie *newNode = createMovie(currLine);
 
-        // Is this the first node in the linked list?
+        // Checks if this is the first node of linked list and points head / tail
         if (head == NULL)
         {
             // This is the first node in the linked link
@@ -122,10 +124,12 @@ struct movie *processFile(char *filePath)
             tail = newNode;
         }
     }
+
+    // garbage collection - frees unneeded memory and closes filepath file
     free(currLine);
     fclose(movieFile);
 
-    printf("Processed file %s and parsed data for %d movies\n", filePath, tail->movieID);
+    printf("Processed file %s and parsed data for %d movies\n", filePath, movieID);
 
     return head;
 }
@@ -135,14 +139,14 @@ struct movie *processFile(char *filePath)
 */
 void printMovie(struct movie* aMovie)
 {
-    printf("%s, %d %s, %f\n", aMovie->title,
+    printf("%s, %d, %f\n", aMovie->title,
                aMovie->year,
-               aMovie->language,
                aMovie->ratingValue);
     
+    // cycles through array of published languages and prints them
     for (int i = 0; i < 5; i++)
     {
-        printf("language #%d: %s\n", i+1, aMovie->language2[i]);
+        printf("language #%d: %s\n", i+1, aMovie->language[i]);
     }
 }
 
@@ -163,7 +167,10 @@ void printMovieList(struct movie *list)
 */
 void printMovieListByYear(int year, struct movie *list)
 {
+    // checks if there is a movie in given year
     int count = 0;
+
+    // scans linked list and if movie year equals given year, prints movie details
     while (list != NULL)
     {
         if (list->year == year)
@@ -173,6 +180,8 @@ void printMovieListByYear(int year, struct movie *list)
         }
         list = list->next;
     }
+
+    // prints statement if no movie data exists for given year
     if (count == 0)
     {
         printf("No data about movies released in the year %d\n", year);
@@ -184,11 +193,15 @@ void printMovieListByYear(int year, struct movie *list)
 */
 void printMovieListByLanguage(char *language, struct movie *list)
 {
+    // checks if there is a movie in given language
     int count = 0;
+
+    // scans linked list and if movie year equals given language, prints movie details
     while (list != NULL)
     {
+        // scans through array of languages for given movie
         for (int i = 0; i < 5; i++){
-            if (strcmp(list->language2[i],language) == 0)
+            if (strcmp(list->language[i],language) == 0)
             {
                 printf("%d %s\n", list->year, list->title);
                 count++;
@@ -196,6 +209,8 @@ void printMovieListByLanguage(char *language, struct movie *list)
         }
         list = list->next;
     }
+
+    // prints statement if no movie data exists for given language
     if (count == 0)
     {
         printf("No data about movies released in %s\n", language);
@@ -207,14 +222,18 @@ void printMovieListByLanguage(char *language, struct movie *list)
 */
 void printHighestRatedMovieByYear(struct movie *list)
 {
+    // initializes a datastructure to track what years we've already found movies for
     int yearsChecked[2022-1899] = {0};
     int count = 0;
+    
+    // checks each node of the linked list to see if we've found a top movie for that year
     while (list != NULL)
     {
         struct movie *temp = list;
         struct movie *top = list;
         yearsChecked[count] = list->year;
         
+        // for new 'year', checks all other nodes to see if theres a higher rated movie
         while (temp != NULL)
         {
             if (temp->year == top->year){
@@ -225,6 +244,8 @@ void printHighestRatedMovieByYear(struct movie *list)
         }
         printf("%d, %.1f, %s\n", top->year, top->ratingValue, top->title);
         count++;
+
+        // when movie to next link, checks to see if that node's year is already found
         for (int i = 0; i < count; i++)
         {
             if (list != NULL && yearsChecked[i] == list->year)
