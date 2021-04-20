@@ -2,10 +2,12 @@
 *  Name : Terence Tang
 *  Course : CS344 - Operating Systems
 *  Date : Apr 12, 2021
-*  Assignment #1: Movies
-*  Description:  C Program built to practice using system calls for input, output, and reading / manipulating files.
-*                Main program built to consume a given file of movies, releaes years, languages, ratings and then
-*                allows user to prompt for additional details, e.g. movies released in a specific year, or language.
+*  Assignment #2: Files and Directories
+*  Description:  C Program built to practice reading and writing files and directories in C via system calls.
+*                Main program built to scan current directory for files given specific prefix and extension criteria. 
+*                Gives the user the ability to scan for the largest or smallest files or to provide custom file name input.
+*                Program then creates a new unique folder directory and prints file's movie contents into new files.
+*                New files are created for each year a movie was released per the input file.
 */
 
 // compiled using gcc option --std=c99
@@ -39,7 +41,7 @@ int main()
     //     return EXIT_FAILURE;
     // }
 
-    // set up user input variables
+    // set up user input and file path / directory name variables for tracking file / directory paths
     int programChoice;
     int fileChoice;
     int fileCheck;
@@ -51,17 +53,17 @@ int main()
     char directoryPath[22];
     char *onid = "tangte";
 
-
-    // Prints user w/ program instructions and prompts for user selection
+    // Prints program instructions and prompts for user selection
     while (programChoice != 2)
     {
         printInstructions(&programChoice);
 
-        // print instructions
+        // print file processing instructions and prompts user for selection
         if (programChoice == 1)
         {
             printFileProcessingInstructions(&fileChoice);
-
+            
+            // checks for invalid user inputs
             if (fileChoice != 1 && fileChoice != 2 && fileChoice !=3)
             {
                 printf("You entered an incorrect choice. Try again.\n");
@@ -70,24 +72,32 @@ int main()
             {
                 // run program and pass the supplied choice int to program
                 fileCheck = getFileName(&fileChoice, fileName, lengthFileName);
+
+                // if user selected to provide custom input, and no file was found, re-prompts user
+                // for file processing selection
                 while (fileCheck != 0 && fileChoice == 3)
                 {
                     printFileProcessingInstructions(&fileChoice);
                     fileCheck = getFileName(&fileChoice, fileName, lengthFileName);
                 }
+
+                // if file is found, processes file data and creates new directory w/ new file outputs
                 if (fileCheck == 0)
                 {
-                    // process file
+                    // process file and creates a movie linked list object
                     printf("Now processing the chosen file named %s\n", fileName);
                     strcpy(filePath, "./");
-                    strcat(filePath, fileName);
+                    // converts file name to an appropriate filepath with directory and folder structure
+                    strcat(filePath, fileName); 
                     struct movie *list = processFile(filePath);
 
-                    // get random naming for new directory and make directory
+                    // get naming for new directory w/ random int and make directory
+                    // if directory already exists, tries again
                     do {
                         setDirectoryName(directoryName, onid);
                         directoryCheck = mkdir(directoryName, 0750);
                     } while (directoryCheck != 0);
+                    // stores directoryPath from directoryName
                     strcpy(directoryPath,"./");
                     strcat(directoryPath,directoryName);
 
@@ -98,7 +108,10 @@ int main()
                 printf("\n");        
             }
         }
+        // if top-level selection is neither 1 nor 2, prints invalid input message
         else if (programChoice != 2) printf("You entered an incorrect choice. Try again.\n\n");
     }
+
+    // if top-level selection is 2, exits program successfully
     return EXIT_SUCCESS;
 }

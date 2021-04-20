@@ -1,11 +1,15 @@
-/* Name : Terence Tang
+/* 
+*  Name : Terence Tang
 *  Course : CS344 - Operating Systems
 *  Date : Apr 12, 2021
-*  Assignment #1: Movies
-*  Description:  C Program built to practice using system calls for input, output, and reading / manipulating files.
-*                Main program built to consume a given file of movies, releaes years, languages, ratings and then
-*                allows user to prompt for additional details, e.g. movies released in a specific year, or language.
+*  Assignment #2: Files and Directories
+*  Description:  C Program built to practice reading and writing files and directories in C via system calls.
+*                Main program built to scan current directory for files given specific prefix and extension criteria. 
+*                Gives the user the ability to scan for the largest or smallest files or to provide custom file name input.
+*                Program then creates a new unique folder directory and prints file's movie contents into new files.
+*                New files are created for each year a movie was released per the input file.
 */
+
 
 // compiled using gcc option --std=c99
 

@@ -1,11 +1,15 @@
-/* Name : Terence Tang
+/* 
+*  Name : Terence Tang
 *  Course : CS344 - Operating Systems
 *  Date : Apr 12, 2021
-*  Assignment #1: Movies
-*  Description:  C Program built to practice using system calls for input, output, and reading / manipulating files.
-*                Main program built to consume a given file of movies, releaes years, languages, ratings and then
-*                allows user to prompt for additional details, e.g. movies released in a specific year, or language.
+*  Assignment #2: Files and Directories
+*  Description:  C Program built to practice reading and writing files and directories in C via system calls.
+*                Main program built to scan current directory for files given specific prefix and extension criteria. 
+*                Gives the user the ability to scan for the largest or smallest files or to provide custom file name input.
+*                Program then creates a new unique folder directory and prints file's movie contents into new files.
+*                New files are created for each year a movie was released per the input file.
 */
+
 
 // compiled using gcc option --std=c99
 
@@ -263,15 +267,23 @@ void printHighestRatedMovieByYear(struct movie *list)
     }
 }
 
+
+/*
+* Takes a given directory path and movie list and writes a new file for each year a 
+* movie was released from the movie list.  Then it prints all movies in the movie list
+* to their respective release year files.
+* File naming format = YYYY.txt
+*/
 void writeMoviesToDirectory(struct movie *list, char *directoryPath)
 {
-    DIR* currDir = opendir(directoryPath);
+    // initiates variables for storing file name / path and a buffer of data to write to files
     int file_descriptor;
     char strYear[5];
     int lengthDirectoryPath = strlen(directoryPath);
     char file_name[11+lengthDirectoryPath];
     char *buffer;
 
+    // stores directory path string locally (fixes odd pointer issues w/ strcat)
     char *dirPath;
     dirPath = calloc(strlen(directoryPath) + 1, sizeof(char));
     strcpy(dirPath, directoryPath);
@@ -279,7 +291,7 @@ void writeMoviesToDirectory(struct movie *list, char *directoryPath)
     // read file line item
     while (list != NULL)
     {
-        // clear previous file_name
+        // clear previous file_name string
         memset(file_name, '\0', strlen(file_name));
 
         // create new file_path based on input movie year
@@ -293,18 +305,15 @@ void writeMoviesToDirectory(struct movie *list, char *directoryPath)
         // open / create corresponding year file with appropriate flags and permissions
         file_descriptor = open(file_name, O_WRONLY | O_CREAT | O_APPEND, 0640);
 
-        // get movie title and concatenate with new line char
+        // get movie title and concatenate with new line char, saves to buffer
         buffer = calloc(strlen(list->title) + 3, sizeof(char));
         strcpy(buffer, list->title);
         strcat(buffer, "\n");
 
-        // byte count
-        // buffer of input details
-        // file descriptor
+        // writes buffer to file
         write(file_descriptor, buffer, strlen(buffer));
 
-        // check if year file exists, if not create one
-        // write line item to corresponding year file
+        // moves to next movie
         list = list->next;
     }
 }

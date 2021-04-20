@@ -1,11 +1,15 @@
-/* Name : Terence Tang
+/* 
+*  Name : Terence Tang
 *  Course : CS344 - Operating Systems
 *  Date : Apr 12, 2021
-*  Assignment #1: Movies
-*  Description:  C Program built to practice using system calls for input, output, and reading / manipulating files.
-*                Main program built to consume a given file of movies, releaes years, languages, ratings and then
-*                allows user to prompt for additional details, e.g. movies released in a specific year, or language.
+*  Assignment #2: Files and Directories
+*  Description:  C Program built to practice reading and writing files and directories in C via system calls.
+*                Main program built to scan current directory for files given specific prefix and extension criteria. 
+*                Gives the user the ability to scan for the largest or smallest files or to provide custom file name input.
+*                Program then creates a new unique folder directory and prints file's movie contents into new files.
+*                New files are created for each year a movie was released per the input file.
 */
+
 
 // compiled using gcc option --std=c99
 
@@ -23,14 +27,14 @@
 #define PREFIX "movies_"
 #define EXTENSION ".csv"
 
-
 /*
-* Parses user input on which file processing feature they 
-* would like to utilize on the given list of movies
+* Parses user input on which type of file they would like to process
 */
 int getFileName(int *fileChoice, char *fileName, int lengthFileName)
 {
     int fileCheck = 1;
+    // parses user input to specific functionality, returns int value for if file found
+    // (fileCheck = 0 means found, 1 means err not found)
     if (*fileChoice == 1)
     {
         fileCheck = getLargestMovieCSV(fileName, lengthFileName);
@@ -46,6 +50,10 @@ int getFileName(int *fileChoice, char *fileName, int lengthFileName)
     return fileCheck;
 }
 
+/*
+* Scans current active directory for the largest file (by byte size) given 
+* specific criteria for file prefix and extension suffixes
+*/
 int getLargestMovieCSV(char *fileName, int lengthFileName)
 {
     // set up directory traverse variables and initialize currDir
@@ -56,17 +64,20 @@ int getLargestMovieCSV(char *fileName, int lengthFileName)
     int i = 0;
     int fileCheck = 1;
 
-    // Go through all the entries
+    // Go through all the entries in current directory
     while ((aDir = readdir(currDir)) != NULL)
     {
+        // check if current entry has a valid prefix ("movies_") and file extension (".csv") 
         if (strncmp(PREFIX, aDir->d_name, strlen(PREFIX)) == 0 && strcmp(EXTENSION, strrchr(aDir->d_name,'.')) == 0)
         {
+            // if file found, updates return value for validation
             fileCheck = 0;
 
             // Get meta-data for the current entry
             stat(aDir->d_name, &dirStat);  
             
-            // Use the difftime function to get the time difference between the current value of lastModifTime and the st_mtime value of the directory entry
+            // Use the entry metadata to determine size, checks if current file size is larger than 
+            // the currently tracked largest found file thus far.  If not, updates file name for largest found.
             if(i == 0 || dirStat.st_size > fileSize){
                 fileSize = dirStat.st_size;
                 memset(fileName, '\0', lengthFileName);
@@ -81,6 +92,10 @@ int getLargestMovieCSV(char *fileName, int lengthFileName)
     return fileCheck;
 }
 
+/*
+* Scans current active directory for the smallest file (by byte size) given 
+* specific criteria for file prefix and extension suffixes
+*/
 int getSmallestMovieCSV(char *fileName, int lengthFileName)
 {
     // set up directory traverse variables and initialize currDir
@@ -91,17 +106,20 @@ int getSmallestMovieCSV(char *fileName, int lengthFileName)
     int i = 0;
     int fileCheck = 1;
 
-    // Go through all the entries
+    // Go through all the entries in current directory
     while ((aDir = readdir(currDir)) != NULL)
     {
+        // check if current entry has a valid prefix ("movies_") and file extension (".csv") 
         if (strncmp(PREFIX, aDir->d_name, strlen(PREFIX)) == 0 && strcmp(EXTENSION, strrchr(aDir->d_name,'.')) == 0)
         {
+            // if file found, updates return value for validation
             fileCheck = 0;
 
             // Get meta-data for the current entry
             stat(aDir->d_name, &dirStat);  
             
-            // Use the difftime function to get the time difference between the current value of lastModifTime and the st_mtime value of the directory entry
+            // Use the entry metadata to determine size, checks if current file size is smaller than 
+            // the currently tracked smallest found file thus far.  If not, updates file name for smallest found.            
             if(i == 0 || dirStat.st_size < fileSize){
                 fileSize = dirStat.st_size;
                 memset(fileName, '\0', lengthFileName);
@@ -116,6 +134,9 @@ int getSmallestMovieCSV(char *fileName, int lengthFileName)
     return fileCheck;
 }
 
+/*
+* Prompts user for a file name and checks if the file exists in the current active directory 
+*/
 int getUserInputFile(char *fileName, int lengthFileName)
 {
     // set up directory traverse variables and initialize currDir
@@ -126,13 +147,14 @@ int getUserInputFile(char *fileName, int lengthFileName)
     int fileCheck = 1;
     char userEntry[256];
 
-    // prompts user for desired file name
+    // prompts user for desired file name and stores to userEntry
     printf("Enter the complete file name: ");
     scanf("%s", userEntry);
 
     // Go through all the entries and scan for match to userEntry
     while ((aDir = readdir(currDir)) != NULL)
     {
+        // if match found, stores file to fileName and updates fileCheck value
         if (strcmp(userEntry, aDir->d_name) == 0)
         {
             memset(fileName, '\0', lengthFileName);
@@ -150,6 +172,9 @@ int getUserInputFile(char *fileName, int lengthFileName)
     return fileCheck;
 }
 
+/*
+* Generates a new directory name with a randomly generated int
+*/
 void setDirectoryName(char *directoryName, char *onid)
 {
     int upper = 99999;
