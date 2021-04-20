@@ -21,6 +21,12 @@ struct movie *createMovie(char *currLine);
 struct movie *processFile(char *filePath);
 
 /*
+* Cleans up memory used for creation of movie link list
+* Call once you've finished with list
+*/
+void free_movie_memory(struct movie *list);
+
+/*
 * Print data for the given movie
 */
 void printMovie(struct movie* aMovie);

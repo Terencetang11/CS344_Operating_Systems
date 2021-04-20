@@ -1,10 +1,7 @@
-Instructions on how to compile Assignment #1 Movies:
+Instructions on how to compile Assignment #2 Files & Directories:
 
 - Terminal Command for compiling -
-gcc --std=c99 -o movies main.c movies.c moviesInstructions.c
+gcc --std=c99 -o movies_by_year main.c movie_processing.c file_processing.c program_instructions.c
 
 - Terminal Command for running resulting executable -
-./movies movies_sample_1.csv  
-
-Command for running executable assumes that movie data file name is movies_sample_1.csv.  Please replace as is appropriate
-for your grading purposes and provided data.
+./movies_by_year 

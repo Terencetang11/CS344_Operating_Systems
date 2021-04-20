@@ -104,6 +104,7 @@ int main()
                     // write movie files to new directory
                     writeMoviesToDirectory(list, directoryPath);  
                     printf("Created directory with name %s\n", directoryName);
+                    free_movie_memory(list);
                 }
                 printf("\n");        
             }
@@ -113,5 +114,6 @@ int main()
     }
 
     // if top-level selection is 2, exits program successfully
+
     return EXIT_SUCCESS;
 }

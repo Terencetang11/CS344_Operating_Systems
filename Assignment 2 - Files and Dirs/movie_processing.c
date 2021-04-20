@@ -144,6 +144,23 @@ struct movie *processFile(char *filePath)
 }
 
 /*
+* Cleans up memory used for creation of movie link list
+* Call once you've finished with list
+*/
+void free_movie_memory(struct movie *list)
+{
+    struct movie *current = list;
+    struct movie *next;
+    while (current != NULL)
+    {
+        next = current->next;
+        free(current->title);
+        free(current);
+        current = next;
+    }
+}
+
+/*
 * Print data for the given movie
 */
 void printMovie(struct movie* aMovie)
@@ -312,8 +329,10 @@ void writeMoviesToDirectory(struct movie *list, char *directoryPath)
 
         // writes buffer to file
         write(file_descriptor, buffer, strlen(buffer));
+        free(buffer);
 
         // moves to next movie
         list = list->next;
     }
+    free(dirPath);
 }
