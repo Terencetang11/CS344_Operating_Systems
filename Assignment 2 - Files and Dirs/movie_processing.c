@@ -135,8 +135,7 @@ struct movie *processFile(char *filePath)
     free(currLine);
     fclose(movieFile);
 
-    printf("Processed file %s and parsed data for %d movies\n", filePath, movieID);
-
+    // printf("Processed file %s and parsed data for %d movies\n", filePath, movieID);
     return head;
 }
 
@@ -273,6 +272,10 @@ void writeMoviesToDirectory(struct movie *list, char *directoryPath)
     char file_name[11+lengthDirectoryPath];
     char *buffer;
 
+    char *dirPath;
+    dirPath = calloc(strlen(directoryPath) + 1, sizeof(char));
+    strcpy(dirPath, directoryPath);
+
     // read file line item
     while (list != NULL)
     {
@@ -281,7 +284,7 @@ void writeMoviesToDirectory(struct movie *list, char *directoryPath)
 
         // create new file_path based on input movie year
         strcpy(file_name,"./");
-        strcat(file_name,directoryPath);
+        strcat(file_name,dirPath);
         strcat(file_name, "/");
         sprintf(strYear, "%d", list->year);
         strcat(file_name,strYear);
@@ -299,7 +302,6 @@ void writeMoviesToDirectory(struct movie *list, char *directoryPath)
         // buffer of input details
         // file descriptor
         write(file_descriptor, buffer, strlen(buffer));
-
 
         // check if year file exists, if not create one
         // write line item to corresponding year file

@@ -84,7 +84,6 @@ int main()
                     struct movie *list = processFile(filePath);
 
                     // get random naming for new directory and make directory
-
                     do {
                         setDirectoryName(directoryName, onid);
                         directoryCheck = mkdir(directoryName, 0750);
@@ -92,14 +91,10 @@ int main()
                     strcpy(directoryPath,"./");
                     strcat(directoryPath,directoryName);
 
-                    printf("directory successfully made: %s\n", directoryName);
-                    // write files  
-                    writeMoviesToDirectory(list, directoryPath);               
-
-
+                    // write movie files to new directory
+                    writeMoviesToDirectory(list, directoryPath);  
+                    printf("Created directory with name %s\n", directoryName);
                 }
-
-
                 printf("\n");        
             }
         }
