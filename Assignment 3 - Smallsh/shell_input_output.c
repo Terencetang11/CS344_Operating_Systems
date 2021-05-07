@@ -30,7 +30,6 @@
 */
 
 
-
 /* 
 * Prompts user for input and reads line from standard input via get line.
 * Returns pointer to stored input.
@@ -45,6 +44,7 @@ char* read_line()
     char *line = malloc(MAX_BUFFER_SIZE * sizeof(char) + 1);
     size_t buffersize = 0;
 
+    // get user input via commandline
     if (fgets(line, MAX_BUFFER_SIZE, stdin) == NULL){
         // if getline returns in error, check for EOF and or error code and exit
         if (feof(stdin)) {
@@ -55,12 +55,6 @@ char* read_line()
         }
     }
     return line;
-
-    // char *line;
-    // line = (char *)malloc(sizeof(char)*(LINE_BUFFERSIZE+1));
-    // scanf("%2048[^\t\r\n]", line);
-    // return line;
-
 }
 
 /* 
@@ -70,7 +64,7 @@ char* read_line()
 */
 struct command_input* parse_line(char *line)
 {
-    int index = 0;
+    int index = 0;                          // tracks index of CL arguments entered
     char *saveptr;                          // For use with strtok_r
 
     // set up variables for $$ replacement
@@ -104,7 +98,7 @@ struct command_input* parse_line(char *line)
     while (token != NULL)
     {
         fflush(stdout);
-        // check for input or output redirect characters and mark index
+        // check for input or output redirect characters and mark index as appropriate
         if (strcmp(token, "<") == 0)
         {
             currCommand->input_redirect = index;
@@ -122,7 +116,8 @@ struct command_input* parse_line(char *line)
             strcpy(currCommand->args[index], token);;
             free(token);
         }
-        else // copy token over to our args pointer array
+        // else copy token over to our args pointer array
+        else 
         {
             currCommand->args[index] = calloc(strlen(token) + 1, sizeof(char));
             strcpy(currCommand->args[index], token);;
@@ -151,8 +146,11 @@ struct command_input* parse_line(char *line)
 */
 int free_mem(char *line, struct command_input *currCommand)
 {
+    // resets command line input datastructure
     memset(line, '\0', strlen(line));
     int index = 0;
+
+    // checks if command was empty line, if not, free up all allocated mem
     if (strcmp(currCommand->command, "\n") != 0 )
     {
         char* arg = currCommand->args[index];
@@ -169,7 +167,7 @@ int free_mem(char *line, struct command_input *currCommand)
 }
 
 /* 
-* Function to replace a string with another value, all within another string (haystack)
+* Function to replace a substring with another value, all within another string (haystack)
 */
 char* replace_string(const char* string, const char* old_str, const char* new_str)
 {

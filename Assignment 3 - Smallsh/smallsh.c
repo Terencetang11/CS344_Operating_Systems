@@ -29,13 +29,14 @@ int status = 0;                                // tracks foreground statuses
 
 int main()
 {
-    set_default_signal_handlers();
+    set_default_signal_handlers();              // sets default signal handlers for parent process
 
+    // continues to loop for additional user command line inputs
     while(1)
     {
         char* line = read_line();
         struct command_input *currCommand = parse_line(line);
-        built_in_router(currCommand);
+        command_router(currCommand);
         free_mem(line, currCommand);
     }
     return 0;
