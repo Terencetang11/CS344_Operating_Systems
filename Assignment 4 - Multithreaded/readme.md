@@ -24,7 +24,7 @@
 ## Installation
     Instructions on how to compile Assignment #3 Smallsh:
 	- Terminal Command for compiling -
-	gcc --std=c99 -o line_processor main.c thread_input.c thread_line_separator.c thread_plus_signs.c thread_output.c
+	gcc --std=c99 -pthread -o line_processor main.c thread_input.c thread_line_separator.c thread_plus_signs.c thread_output.c
 
     - Terminal Command for running resulting executable -
     ./line_processor
