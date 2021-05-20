@@ -1,34 +1,30 @@
-# Assignment 3: smallsh
+# Assignment 4: Multi-threaded Producer Consumer Pipeline
  	By: Terence Tang
  	tangte@oregonstate.edu
  	CS 344 Operating Systems
- 	5/5/2020
+ 	5/16/2021
 
 
     Included files:
-    - smallsh.c 
-    - shell_input.c
-    - shell_built_in_funcs.c
-    - shell_executing_commands.c
-    - shell_signal_handling.c
-    - smallsh.h
+    - main.c 
+    - thread_input.c
+    - thread_line_separator.c
+    - thread_plus_signs.c
+    - thread_output.c
+    - multithreaded.h
 
 
-    Simple os shell application written in C. Features many common and helpful shell functions:
- 	- Command prompt for entering and running command lines
-	- Handling comments and blank lines.  Comments begin with a '#' char
-	- Expansion of variable.  The $$ var is expanded to shell pid
-	- Built-in commands for cd, exit, and status functions
-	- Executes other commands via fork(), execvp(), and waitpid()
-	- Input and output redirection
-	- Supports running foreground and background processes
-	- Custom signal handlers for catching SIGINT and SIGTSTP
+    Simple multithreaded line processor app for reformating text input written in C.  Features
+	multithreaded implementation and highlights how to handle multi threaded processes:
+	- Communication via shared resources across producer and consumer piplines
+	- Mutual exclusivity access of shared resources
+	- Conditional variables for process signaling
 
 
 ## Installation
     Instructions on how to compile Assignment #3 Smallsh:
 	- Terminal Command for compiling -
-    gcc --std=c99 -o smallsh smallsh.c shell_input_output.c shell_executing_commands.c  shell_built_in_funcs.c shell_signal_handling.c
+	gcc --std=c99 -o line_processor main.c thread_input.c thread_line_separator.c thread_plus_signs.c thread_output.c
 
     - Terminal Command for running resulting executable -
-    ./smallsh
+    ./line_processor

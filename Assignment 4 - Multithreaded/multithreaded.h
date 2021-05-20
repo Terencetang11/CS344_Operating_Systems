@@ -10,7 +10,7 @@
 
 // Declare Constants
 #define MAX_INPUT_BUFFER_SIZE 1000
-#define MAX_PROGRAM_SIZE 49
+#define MAX_PROGRAM_SIZE 50
 #define ASCII_LOWER 32
 #define ASCII_UPPER 126
 #define MAX_OUTPUT_BUFFER_SIZE 80
