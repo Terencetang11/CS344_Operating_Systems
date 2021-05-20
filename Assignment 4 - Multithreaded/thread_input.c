@@ -83,6 +83,11 @@ void *get_input(void *args)
     {
         char *line = read_input_line();
         put_buff_1(line);
+
+        if (stop_input == true && line == NULL)
+        {
+            return NULL;
+        }
     }
     return NULL;
 }

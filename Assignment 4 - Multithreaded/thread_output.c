@@ -23,6 +23,9 @@
 #include "multithreaded.h"
 
 
+// Declare Global Variables
+extern int stop_input;     // bool for if STOP has been correctly entered into stdin
+
 // Thread 3 variables - Buffers, producer and consumer indexes, mutex and cond vars.
 extern char **buffer_3;                 // Declare buffer to store lines of str
 extern int count_3;                     // Number of items in the buffer
@@ -93,6 +96,12 @@ void *thread_output(void *args)
             print_output(line, output_line);
         }
         free(line);
+
+        if (stop_input == true && line == NULL)
+        {
+            free(output_line);
+            return NULL;
+        }
     }
     free(output_line);
     return NULL;
