@@ -55,24 +55,21 @@ char *read_input_line()
     // set up variables - getline will allocate memory for line input
     char *line = calloc(MAX_INPUT_BUFFER_SIZE + 1,sizeof(char));
 
-    if (fgets(line, MAX_INPUT_BUFFER_SIZE, stdin) == NULL){     // check user input via stdin for error
-        if (feof(stdin)) {                          // recieved an EOF error, program continues
+    if (fgets(line, MAX_INPUT_BUFFER_SIZE, stdin) == NULL){             // check user input via stdin for error
+        if (feof(stdin)) {                                              // recieved an EOF error, program continues
             stop_input = true;
             return NULL;                                                
-        } else  {                                   // received an error and needs to quit
+        } else  {                                                       // received an error and needs to quit
             perror("read_line");
             exit(EXIT_FAILURE);                                         
         }
     }
-    else if (strcmp(line, END_MARKER) == 0)           // if no error, check if input is STOP signal
+    else if (stop_input == true || strcmp(line, END_MARKER) == 0)       // if no error, check STOP signal has been sent
     {
         stop_input = true;
+        return NULL;                                                    // if stop already signaled, return null
     } 
-    else if (stop_input == true)                    // else if stop bool = true, return NULL instead of stdin input
-    {
-        return NULL;
-    }
-    return line;                                    // else return stdin line
+    return line;                                                        // else return stdin line
 }
 
 /*
