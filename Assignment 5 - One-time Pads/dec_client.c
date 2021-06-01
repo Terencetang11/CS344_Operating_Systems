@@ -1,3 +1,18 @@
+/* 
+*  Name : Terence Tang
+*  Course : CS344 - Operating Systems
+*  Date : May 30 2021
+*  Assignment #5: One-Time Pads - Decryption Client
+*  Description:  Client which takes user provided cipher and key files and sends decryption requests to an 
+*                localhost decryption service via a provided port number.  The data transfer is made via socket 
+*                communications.  The client checks cipher and key inputs for valid length and input characters
+*                before sending a request to the decryption service.  It then checks that it has connected to the 
+*                right service and sends all relevant data.  It then waits to receive a plaintext response which
+*                it prints to stdout (which can be redirected).
+*
+*/
+
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
