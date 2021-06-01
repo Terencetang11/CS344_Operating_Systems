@@ -11,8 +11,8 @@
     - enc_client.c
     - dec_server.c
     - dec_client.c
-    - compilationscript
-    - p5testscript
+    - compileall (compilation script)
+    - p5testscript (test script)
     - plaintext1
     - plaintext2
     - plaintext3
@@ -32,7 +32,7 @@
 ## Installation
     Instructions on how to compile Assignment #5 OTP:
 	- Terminal Command for compiling - Compilation script provided to compile all 5 c program files at once
-	./commpilationscription 
+	./commpileall 
 
     Note: Permissions may need to be granted to scripts with the following cmd -> $chmod +x ./compilationscript
 
