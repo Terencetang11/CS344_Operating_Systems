@@ -154,12 +154,10 @@ int main(int argc, char *argv[])
     }
 
     // Check if Plaintext file has valid chars and store file size
-    fgets(ciphertext, sizeof(ciphertext) - 1, plaintextFile);                 // stores file contents to str
+    fgets(ciphertext, sizeof(ciphertext) - 1, plaintextFile);               // stores file contents to str
     fseek(plaintextFile, 0, SEEK_SET);                                      // reset pointer for next use
     checkFileForValidChars(ciphertext, argv[1]);
-    ciphertextLen = strlen(ciphertext);                                       // store ciphertext len
-// printf("plaintext input size: %d\n", plaintextLen);
-// printf("plaintext text: %s\n", plaintext);
+    ciphertextLen = strlen(ciphertext);                                     // store ciphertext len
 
     // Open specified key file text for read only
     memset(filePath, '\0', sizeof(filePath));                               // clear filepath    
@@ -177,8 +175,6 @@ int main(int argc, char *argv[])
     fseek(keyFile, 0, SEEK_SET);                                            // reset pointer for next use
     checkFileForValidChars(key, argv[2]);
     keyLen = strlen(key);                                                   // store key len
-// printf("key input size: %d\n", keyLen);
-// printf("key text: %s\n", key);
 
     // check if plaintext is greater than key size, throw error and exit if true
     if(keyLen < ciphertextLen){ 
@@ -211,7 +207,6 @@ int main(int argc, char *argv[])
     char* checkMsg = "dec_server";                                          // Send request type to server
     sendData(socketFD, checkMsg);                                                               
     charsRead = readData(socketFD, buffer, sizeof(buffer));                 // Receive server response - accepted or denied
-// printf("server response: %s\n", buffer);
     if(strcmp(buffer, "denied") == 0){                                      // Check if server affirms correct connection type
 		fprintf(stderr, "Error: dec_client cannot use enc_server on port %d\n", atoi(argv[3]));
 		exit(2);    // if invalid, else exits
@@ -221,10 +216,8 @@ int main(int argc, char *argv[])
     // Send data length
     memset(buffer, '\0', sizeof(buffer));                                   // Clear out buffers and charsread for next send
 	sprintf(buffer, "%d", ciphertextLen);
-// printf("buffer value: %s\n", buffer);
     sendData(socketFD, buffer);                                             // Send ciphertext length to server
     charsRead = readData(socketFD, buffer, sizeof(buffer));                 // Receive server response - continue msg
-// printf("server response: %s\n", buffer);
 
     // Send ciphertext data to dec_server
     charsWritten = 0;
@@ -242,7 +235,6 @@ int main(int argc, char *argv[])
         fprintf(stderr, "ERROR: Server did not receive plaintext data\n"); 
         exit(2); 
     }
-// printf("server plaintext response: %s\n", buffer);
 
     /*-- Send Key Data to Decryption Server --*/
     // Send key data to dec_server
@@ -262,8 +254,6 @@ int main(int argc, char *argv[])
         exit(2); 
     }
     charsWritten += sendData(socketFD, "Waiting for ciphertext..");
-// printf("server key response: %s\n", buffer);
-
 
     /*-- Receive Plaintext Data from Server --*/
     memset(plaintext, '\0', sizeof(plaintext));

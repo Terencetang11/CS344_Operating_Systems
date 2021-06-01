@@ -188,9 +188,6 @@ int main(int argc, char *argv[])
                 // Receive request type from client
                 charsRead = readData(connectionSocket, buffer, sizeof(buffer));
                 
-// printf("Recieved charsread: %d \n", charsRead);
-// printf("Received text client: %s\n", buffer);
-                
                 // confirm if request type is valid for this server
                 if (strcmp(buffer, "enc_server") == 0)
                 {
@@ -200,19 +197,12 @@ int main(int argc, char *argv[])
                 {
                     charsWritten = sendData(connectionSocket, "denied");
                 }
-// printf("charsWritten: %d\n", charsWritten);
-
 
                 /*-- Receive and Confirm Data Length from Client --*/
                 // Receive data length from client
                 charsRead = readData(connectionSocket, buffer, sizeof(buffer));
                 dataLength = atoi(buffer);                                      // convert string to int for dataLen storage
-// printf("Recieved charsread: %d \n", charsRead);
-// printf("Received text client: %s\n", buffer);
-// printf("Received datalength: %d\n", dataLength);
-                
                 charsWritten = sendData(connectionSocket, "continue");          // confirm that data length reeceived
-// printf("charsWritten: %d\n", charsWritten);
 
                 /*-- Receive Plaintext Data from Client --*/
                 memset(plaintext, '\0', sizeof(plaintext));
@@ -223,10 +213,7 @@ int main(int argc, char *argv[])
                     charsRead += readData(connectionSocket, buffer, sizeof(buffer));
                     strcat(plaintext, buffer);
                 }
-// printf("received plaintest data: %s\n", plaintext);
                 sendData(connectionSocket, "Plaintext Received");               // confirm that plaintext reeceived
-// printf("charsWritten: %d\n", charsWritten);
-
 
                 /*-- Receive Key Data from Client --*/
                 memset(key, '\0', sizeof(key));
@@ -237,14 +224,12 @@ int main(int argc, char *argv[])
                     charsRead += readData(connectionSocket, buffer, sizeof(buffer));
                     strcat(key, buffer);
                 }
-// printf("received key data: %s\n", key);
                 sendData(connectionSocket, "Key Received");                     // confirm that key received
                 readData(connectionSocket, buffer, sizeof(buffer));             // allows client-side to confirm ready for ciphertext
 
                 /*-- Encrypt Data and Send Back to Client --*/
                 // encrypt data
                 encryptData(plaintext, key, ciphertext);
-// printf("encrypted data: %s\n", ciphertext);
 
                 // send data back to client
                 charsWritten = 0;
@@ -256,7 +241,6 @@ int main(int argc, char *argv[])
                     charsWritten = send(connectionSocket, tempPtr, MAX_TRANSMISSION_SIZE - 1, 0);
                     tempPtr += charsWritten;
                     totalWritten += charsWritten;
-// printf("charsWritten: %d\n", charsWritten);
                 }
                 
                 /*-- Close connection socket for this client and exit child process --*/
@@ -272,10 +256,8 @@ int main(int argc, char *argv[])
         // check for terminated processes and update the # of active connections
         while((childPid = waitpid(-1, &childStatus, WNOHANG)) > 0)
         {
-            // printf("child process ended: %d\n", childPid);
             activeConnections--;
         }
-        // printf("looping with %d active connections.\n", activeConnections);
     }
 
     // Close the listening socket and exit program

@@ -197,9 +197,6 @@ int main(int argc, char *argv[])
                 // Receive request type from client
                 charsRead = readData(connectionSocket, buffer, sizeof(buffer));
                 
-// printf("Recieved charsread: %d \n", charsRead);
-// printf("Received text client: %s\n", buffer);
-                
                 // confirm if request type is valid for this server
                 if (strcmp(buffer, "dec_server") == 0)
                 {
@@ -214,9 +211,6 @@ int main(int argc, char *argv[])
                 // Receive data length from client
                 charsRead = readData(connectionSocket, buffer, sizeof(buffer));
                 dataLength = atoi(buffer);                                      // convert string to int for dataLen storage
-// printf("Recieved charsread: %d \n", charsRead);
-// printf("Received text client: %s\n", buffer);
-// printf("Received datalength: %d\n", dataLength);
                 charsWritten = sendData(connectionSocket, "continue");          // confirm that data length reeceived
 
                 /*-- Receive Ciphertext Data from Client --*/
@@ -228,7 +222,6 @@ int main(int argc, char *argv[])
                     charsRead += readData(connectionSocket, buffer, sizeof(buffer));
                     strcat(ciphertext, buffer);
                 }
-// printf("received data: %s\n", plaintext);
                 sendData(connectionSocket, "Ciphertext Received");               // confirm that plaintext reeceived
 
                 /*-- Receive Key Data from Client --*/
@@ -241,7 +234,6 @@ int main(int argc, char *argv[])
                     strcat(key, buffer);
                 }
 
-// printf("received key data: %s\n", key);
                 sendData(connectionSocket, "Key Received");                     // confirm that key received
                 readData(connectionSocket, buffer, sizeof(buffer));             // allows client to confirm ready for plaintext
 
@@ -249,7 +241,6 @@ int main(int argc, char *argv[])
                 /*-- Decrypt Data and Send Back to Client --*/
                 // decrypt data
                 decryptData(ciphertext, key, plaintext);
-// printf("encrypted data: %s\n", ciphertext);
 
                 // send data back to client
                 charsWritten = 0;
@@ -276,10 +267,8 @@ int main(int argc, char *argv[])
         // check for terminated processes and update the # of active connections
         while((childPid = waitpid(-1, &childStatus, WNOHANG)) > 0)
         {
-            // printf("child process ended: %d\n", childPid);
             activeConnections--;
         }
-        // printf("looping with %d active connections.\n", activeConnections);
     }
 
     // Close the listening socket

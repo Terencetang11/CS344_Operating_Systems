@@ -158,8 +158,6 @@ int main(int argc, char *argv[])
     fseek(plaintextFile, 0, SEEK_SET);                                      // reset pointer for next use
     checkFileForValidChars(plaintext, argv[1]);
     plaintextLen = strlen(plaintext);                                       // store plaintext len
-// printf("plaintext input size: %d\n", plaintextLen);
-// printf("plaintext text: %s\n", plaintext);
 
     // Open specified key file text for read only
     memset(filePath, '\0', sizeof(filePath));                               // clear filepath variable                
@@ -177,8 +175,6 @@ int main(int argc, char *argv[])
     fseek(keyFile, 0, SEEK_SET);                                            // reset pointer for next use
     checkFileForValidChars(key, argv[2]);
     keyLen = strlen(key);                                                   // store key len
-// printf("key input size: %d\n", keyLen);
-// printf("key text: %s\n", key);
 
     // check if plaintext is greater than key size, throw error and exit if true
     if(keyLen < plaintextLen){ 
@@ -211,7 +207,6 @@ int main(int argc, char *argv[])
     char* checkMsg = "enc_server";                                          // Send request type to server
     sendData(socketFD, checkMsg);                                                               
     charsRead = readData(socketFD, buffer, sizeof(buffer));                 // Receive server response - accepted or denied
-// printf("server response: %s\n", buffer);
     if(strcmp(buffer, "denied") == 0){                                      // Check if server affirms correct connection type
 		fprintf(stderr, "Error: enc_client cannot use dec_server on port %d\n", atoi(argv[3]));
 		exit(2);    // if invalid, else exits
@@ -221,10 +216,8 @@ int main(int argc, char *argv[])
     // Send data length
     memset(buffer, '\0', sizeof(buffer));                                   // Clear out buffers and charsread for next send
 	sprintf(buffer, "%d", plaintextLen);
-// printf("buffer value: %s\n", buffer);
     sendData(socketFD, buffer);                                             // Send plaintext length to server
     charsRead = readData(socketFD, buffer, sizeof(buffer));                 // Receive server response - continue msg
-// printf("server response: %s\n", buffer);
 
     // Send plaintext data to enc_server
     charsWritten = 0;
@@ -242,7 +235,6 @@ int main(int argc, char *argv[])
         fprintf(stderr, "ERROR: Server did not receive plaintext data\n"); 
         exit(2); 
     }
-// printf("server plaintext response: %s\n", buffer);
 
     /*-- Send Key Data to Encryption Server --*/
     // Send key data to enc_server
@@ -261,23 +253,16 @@ int main(int argc, char *argv[])
         fprintf(stderr, "ERROR: Server did not receive key data\n"); 
         exit(2); 
     }
-    charsWritten += sendData(socketFD, "Waiting for ciphertext..");
-
-// printf("server key response: %s\n", buffer);
-    
+    charsWritten += sendData(socketFD, "Waiting for ciphertext..");    
 
     /*-- Receive Ciphertext Data from Server --*/
     memset(ciphertext, '\0', sizeof(ciphertext));
     charsRead = 0;
-    // printf("cipher text: %s, chars read: %d\n", ciphertext, charsRead);
     // continues to read cipher data from server until expected data length
     while (charsRead < plaintextLen)
     {
-        // printf("in while loop\n");
         charsRead += readData(socketFD, buffer, sizeof(buffer));
-        // printf("chars read: %d\n", charsRead);
         strcat(ciphertext, buffer);                                         // stores cipher text to ciphertext str
-        // printf("buffer: %s\n cipher: %s\n", buffer, ciphertext);
     }
     printf("%s\n", ciphertext);                                             // prints ciphertext with added newline char
 
